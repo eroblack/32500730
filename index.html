@@ -3,105 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eroblack Air Strike</title>
+    <title>Eroblack Pro Roulette</title>
     <style>
-        body { margin: 0; background: #000b1a; color: white; font-family: sans-serif; overflow: hidden; touch-action: none; text-align: center; }
-        canvas { display: block; background: #000; margin: 0 auto; }
-        #ui-top { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; z-index: 10; pointer-events: none; }
-        .stat-box { background: rgba(0,0,0,0.8); padding: 10px; border-radius: 12px; border: 1px solid #00ffff; min-width: 90px; box-shadow: 0 0 10px rgba(0,255,255,0.2); }
-        .label { font-size: 10px; color: #00ffff; display: block; text-transform: uppercase; letter-spacing: 1px; }
-        .val { font-size: 20px; font-weight: bold; color: #fff; }
+        body { margin: 0; background: radial-gradient(circle, #1a1a1a, #000); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; text-align: center; }
         
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .card { width: 85%; background: #111; border: 2px solid #f00; border-radius: 20px; padding: 25px; box-shadow: 0 0 20px #f00; max-height: 85vh; overflow-y: auto; }
-        input { width: 90%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #555; color: #0f0; text-align: center; font-size: 24px; border-radius: 10px; font-weight: bold; }
+        #ui-top { text-align: center; margin-bottom: 5px; z-index: 10; }
+        h2 { color: #ff0033; margin: 2px; text-shadow: 0 0 10px #ff0033; font-size: 24px; }
+        
+        #controls { background: rgba(0, 0, 0, 0.6); padding: 12px; border-radius: 15px; border: 1px solid #ff0033; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; width: 85%; max-width: 340px; box-shadow: 0 0 15px rgba(255, 0, 51, 0.3); }
+        
+        .row-inputs { display: flex; justify-content: space-around; width: 100%; gap: 10px; margin-bottom: 8px; }
+        .input-box { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 4px; font-weight: bold; letter-spacing: 0.5px; }
+        
+        /* Id edittextPeye entegre pou miz la */
+        input { background: #000; color: #ff0033; border: 2px solid #ff0033; padding: 8px; border-radius: 8px; width: 80%; text-align: center; font-size: 18px; font-weight: bold; }
+        input:focus { outline: none; border-color: #00ffcc; color: #00ffcc; }
         
         /* Zòn Bouton Miz yo */
-        .miz-buttons-container { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
-        .btn-miz { flex: 1; min-width: 55px; padding: 10px 5px; background: #222; border: 1px solid #00ffff; color: #00ffff; font-weight: bold; border-radius: 8px; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .btn-miz:active { background: #00ffff; color: #000; }
-
-        button.btn-lanse { width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; font-size: 20px; cursor: pointer; background: linear-gradient(#f00, #900); color: #fff; text-transform: uppercase; margin-top: 10px; }
-        #fraz-miz { font-size: 14px; color: #ffff00; font-weight: bold; margin: 10px 0; letter-spacing: 0.5px; }
-        #dialogue-box { font-size: 13px; color: #ff00ff; font-style: italic; margin-bottom: 15px; min-height: 18px; font-weight: bold; }
+        .miz-buttons-container { display: flex; justify-content: center; gap: 5px; width: 100%; margin-bottom: 8px; }
+        .btn-miz { flex: 1; padding: 8px 2px; background: #222; border: 1px solid #ff0033; color: #ff0033; font-weight: bold; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-miz:active { background: #ff0033; color: #000; }
+        
+        #wheel-container { position: relative; margin-top: 5px; }
+        #pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 24px solid #fff; z-index: 10; filter: drop-shadow(0 0 5px #000); }
+        
+        canvas { border: 6px solid #333; border-radius: 50%; box-shadow: 0 0 25px rgba(255, 0, 51, 0.4); }
+        
+        #spin-btn { margin-top: 12px; padding: 12px 45px; font-size: 18px; font-weight: bold; color: white; background: linear-gradient(45deg, #ff0033, #99001a); border: none; border-radius: 50px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 10px rgba(255, 0, 51, 0.4); width: 85%; max-width: 340px; }
+        #spin-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #444; box-shadow: none; }
+        
+        #result-display { margin-top: 5px; font-size: 18px; font-weight: bold; height: 25px; color: #00ffcc; }
+        #dialogue-box { font-size: 13px; color: #ff00ff; font-style: italic; margin: 4px 0; min-height: 18px; font-weight: bold; }
+        #fraz-miz { font-size: 13px; color: #ffff00; font-weight: bold; margin: 4px 0; }
     </style>
 </head>
 <body>
 
     <div id="ui-top">
-        <div class="stat-box"><span class="label">TOUYE</span><span id="score" class="val">0</span>/100</div>
-        <div class="stat-box"><span class="label">RETE</span><span id="remain" class="val">105</span></div>
+        <h2>EROBLACK CASINO</h2>
+        <!-- Ti dyalòg k ap kominike ak jwè a -->
+        <div id="dialogue-box">Kòmandan: "Fè chwa chif ou ak miz ou pou w defye roulèt la!"</div>
+        <div id="result-display"></div>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="modal">
-        <div class="card" id="modal-content">
-            <h2 style="color:#f00; margin-top:0; margin-bottom:5px;">EROBLACK STRIKE</h2>
-            <p style="margin-top:0; font-size:14px;">Touye 100 avion lènmi sou 105. Chak bezwen 7 bal!</p>
-            
-            <!-- Ti dyalòg k ap kominike ak jwè a -->
-            <div id="dialogue-box">Kòmandan: "Chwazi yon miz pou n dekole misyon an!"</div>
-
-            <label style="font-size:12px; color:#888;">ANTRE MIZ OU (HTG)</label>
-            
-            <!-- ID Chanje an edittextPeye jan ou te mande l la -->
-            <input type="number" id="edittextPeye" value="10" oninput="KalkileKòb()">
-            
-            <!-- 5 Bouton Miz rapid yo -->
-            <div class="miz-buttons-container">
-                <button class="btn-miz" onclick="ChwaziMiz(1)">1 HTG</button>
-                <button class="btn-miz" onclick="ChwaziMiz(5)">5 HTG</button>
-                <button class="btn-miz" onclick="ChwaziMiz(10)">10 HTG</button>
-                <button class="btn-miz" onclick="ChwaziMiz(15)">15 HTG</button>
-                <button class="btn-miz" onclick="ChwaziMiz(25)">25 HTG</button>
+    <div id="controls">
+        <div class="row-inputs">
+            <div class="input-box">
+                <label>CHIF (0-31)</label>
+                <input type="number" id="userNumber" min="0" max="31" value="7">
             </div>
-            
-            <p id="fraz-miz">Ou mize 10 HTG, siw genyen wap fè 100 HTG!</p>
-            
-            <button class="btn-lanse" onclick="startGame()">LANCE MISYON</button>
+            <div class="input-box">
+                <label>MIZ (HTG)</label>
+                <!-- Id chanje an edittextPeye otomatikman -->
+                <input type="number" id="edittextPeye" value="10" oninput="KalkileKòb()">
+            </div>
         </div>
+
+        <!-- 5 Bouton Miz rapid yo -->
+        <div class="miz-buttons-container">
+            <button class="btn-miz" onclick="ChwaziMiz(1)">1 HTG</button>
+            <button class="btn-miz" onclick="ChwaziMiz(5)">5 HTG</button>
+            <button class="btn-miz" onclick="ChwaziMiz(10)">10 HTG</button>
+            <button class="btn-miz" onclick="ChwaziMiz(15)">15 HTG</button>
+            <button class="btn-miz" onclick="ChwaziMiz(25)">25 HTG</button>
+        </div>
+        
+        <p id="fraz-miz">Ou mize 10 HTG, siw genyen wap fè 100 HTG!</p>
     </div>
+
+    <div id="wheel-container">
+        <div id="pointer"></div>
+        <canvas id="wheel" width="280" height="280"></canvas>
+    </div>
+
+    <button id="spin-btn" onclick="spinWheel()">Vire Roulèt la</button>
+
+    <!-- Bwat sa a kache men li la pou Sketchware ka toujou jwenn ID edittextGenyen an si li bezwen li nan kòd la -->
+    <input type="text" id="edittextGenyen" value="0" style="display:none;">
 
 <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let score = 0;
-    let enemiesCreated = 0;
-    let enemiesFinished = 0;
-    let gameActive = false;
-    let mizFinal = 0;
-    const TOTAL_ENEMIES = 105; 
-    const TARGET = 100;
-
-    let player = { x: canvas.width/2, y: canvas.height - 100 };
-    let bullets = [];
-    let enemies = [];
-    
-    // Tèks Background EROBLACK
-    let bgTexts = [];
-    for(let i=0; i<12; i++) {
-        bgTexts.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            s: 0.7 + Math.random() * 0.5
-        });
+    // Koneksyon ak Sketchware atravè VoyeKòb
+    function sendToApp(bwat, val) {
+        if (window.Android) { 
+            window.Android.voyeKòb(bwat, val.toString()); 
+        }
+        console.log("App -> " + bwat + ": " + val);
     }
 
-    // Lis fraz dyalòg selon sitiyasyon yo
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const resultDisplay = document.getElementById("result-display");
+    
+    const sectors = Array.from({length: 32}, (_, i) => i);
+    const colors = sectors.map(i => i % 2 === 0 ? "#ff0033" : "#111");
+    
+    let arc = Math.PI / (sectors.length / 2);
+    let startAngle = 0;
+    let spinTimeout = null;
+    let spinAngleStart = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+    let mizFinal = 0;
+
+    // Lis fraz dyalòg yo
     const dyalogMiz = [
-        'Kòmandan: "Bèl chwa! Avyon an pare pou konba."',
-        'Kòmandan: "Miz sa a lou! Pare pou w rache viktwa a."',
-        'Kòmandan: "Lènmi yo pap konprann anyen la! Ann al jwe."',
-        'Kòmandan: "Pilòt, estrateji sa a sanble bon. Parat tèt ou!"'
+        'Kòmandan: "Chwa sa a bèl! Roulèt la pral chofe."',
+        'Kòmandan: "Ou mete bon kòb sou tab la! Ann gade kote l ap tonbe."',
+        'Kòmandan: "Nimewo sa a gen chans, ann croise dwèt nou!"',
+        'Kòmandan: "Chans lan pral pale la! Pare w!"'
     ];
 
-    const dyalogLanse = [
-        'Kòmandan: "Misyon lanse! Pa kite okenn avyon pase!"',
-        'Kòmandan: "Atak la kòmanse! Tire san gad dèyè!"'
+    const dyalogVire = [
+        'Kòmandan: "Roulèt la ap vire! Tout je fikse sou li!"',
+        'Kòmandan: "Boul la ap kouri... Kote l ap rale fren l?"'
     ];
 
     function BayDyalog(lis) {
@@ -109,7 +124,6 @@
         document.getElementById('dialogue-box').innerText = lis[n];
     }
 
-    // Lè jwè a klike sou yon bouton miz rapid
     function ChwaziMiz(valè) {
         document.getElementById('edittextPeye').value = valè;
         KalkileKòb();
@@ -123,170 +137,116 @@
         document.getElementById('fraz-miz').innerText = `Ou mize ${miz} HTG, siw genyen wap fè ${potansyel} HTG!`;
     }
 
-    function sendToApp(bwat, val) {
-        if (window.Android) { window.Android.voyeKòb(bwat, val.toString()); }
+    function drawWheel() {
+        ctx.clearRect(0, 0, 280, 280);
+        for (let i = 0; i < sectors.length; i++) {
+            let angle = startAngle + i * arc;
+            ctx.fillStyle = colors[i];
+            ctx.beginPath();
+            ctx.arc(140, 140, 130, angle, angle + arc, false);
+            ctx.lineTo(140, 140);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(255,255,255,0.15)";
+            ctx.stroke();
+
+            ctx.save();
+            ctx.fillStyle = "white";
+            ctx.translate(140 + Math.cos(angle + arc / 2) * 105, 140 + Math.sin(angle + arc / 2) * 105);
+            ctx.rotate(angle + arc / 2 + Math.PI / 2);
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText(sectors[i], -ctx.measureText(sectors[i]).width / 2, 0);
+            ctx.restore();
+        }
+        
+        ctx.fillStyle = "#222";
+        ctx.beginPath();
+        ctx.arc(140, 140, 32, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ff0033";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = "white";
+        ctx.font = "bold 8px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("EROBLACK", 140, 143);
     }
 
-    function startGame() {
+    function spinWheel() {
+        const userNum = parseInt(document.getElementById("userNumber").value);
         mizFinal = document.getElementById('edittextPeye').value;
-        if(mizFinal <= 0 || mizFinal === "") {
-            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Antre yon miz valab anvan nou dekole!"';
+
+        if (isNaN(userNum) || userNum < 0 || userNum > 31) {
+            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Chwazi yon chif ant 0 ak 31 anvan w vire!"';
             return;
         }
+        if (mizFinal <= 0 || mizFinal === "") {
+            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Antre yon miz valab sou tab la!"';
+            return;
+        }
+
+        // Voye miz la nan aplikasyon an nan kòmansman
         sendToApp("peye", mizFinal);
         sendToApp("genyen", "0");
+
+        resultDisplay.innerText = "";
+        BayDyalog(dyalogVire);
         
-        BayDyalog(dyalogLanse);
-        
-        // Kite modal la vizib yon ti fraksyon segonn pou wè dyalòg la anvan l disparèt
-        setTimeout(() => {
-            document.getElementById('modal').style.display = "none";
-            gameActive = true;
-            spawnEnemy();
-            update();
-        }, 600);
+        document.getElementById("spin-btn").disabled = true;
+        spinAngleStart = Math.random() * 10 + 10;
+        spinTime = 0;
+        spinTimeTotal = Math.random() * 3 + 4 * 1000;
+        rotateWheel();
     }
 
-    function spawnEnemy() {
-        if (!gameActive || enemiesCreated >= TOTAL_ENEMIES) return;
-        enemies.push({
-            x: Math.random() * (canvas.width - 60) + 30,
-            y: -60,
-            hp: 7,
-            speed: 0.8 + Math.random() * 0.7
-        });
-        enemiesCreated++;
-        document.getElementById('remain').innerText = (TOTAL_ENEMIES - enemiesCreated);
-        setTimeout(spawnEnemy, 1200);
-    }
-
-    setInterval(() => {
-        if (gameActive) {
-            bullets.push({ x: player.x, y: player.y - 20, speed: 15 });
+    function rotateWheel() {
+        spinTime += 30;
+        if (spinTime >= spinTimeTotal) {
+            stopRotateWheel();
+            return;
         }
-    }, 150);
+        let spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+        startAngle += (spinAngle * Math.PI / 180);
+        drawWheel();
+        spinTimeout = setTimeout(rotateWheel, 30);
+    }
 
-    window.addEventListener("touchmove", (e) => {
-        if(!gameActive) return;
-        let touch = e.touches[0];
-        player.x = touch.clientX;
-        player.y = touch.clientY;
-        e.preventDefault();
-    }, {passive: false});
+    function stopRotateWheel() {
+        clearTimeout(spinTimeout);
+        let degrees = startAngle * 180 / Math.PI + 90;
+        let arcd = arc * 180 / Math.PI;
+        let index = Math.floor((360 - degrees % 360) / arcd);
+        let winningNumber = sectors[index];
+        let userNum = parseInt(document.getElementById("userNumber").value);
+        
+        let gain = 0;
 
-    function drawFighter(x, y, color, isEnemy) {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        if(isEnemy) {
-            ctx.moveTo(x, y + 25);
-            ctx.lineTo(x - 20, y - 15);
-            ctx.lineTo(x + 20, y - 15);
+        if (winningNumber === userNum) {
+            gain = mizFinal * 10;
+            resultDisplay.style.color = "#00ffcc";
+            resultDisplay.innerText = "OU GANYEN! SE TE: " + winningNumber;
+            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Magnifik! Ou devine egzakteman kote boul la t apral poze!"';
         } else {
-            ctx.moveTo(x, y - 25);
-            ctx.lineTo(x - 20, y + 15);
-            ctx.lineTo(x + 20, y + 15);
-        }
-        ctx.fill();
-        ctx.fillRect(x - 25, y - 2, 50, 6);
-    }
-
-    function update() {
-        if (!gameActive) return;
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw Background EROBLACK
-        ctx.font = "bold 22px Arial";
-        bgTexts.forEach(t => {
-            ctx.fillStyle = "rgba(0, 255, 255, 0.15)";
-            ctx.fillText("EROBLACK", t.x, t.y);
-            t.y += t.s;
-            if(t.y > canvas.height) { 
-                t.y = -30; 
-                t.x = Math.random() * (canvas.width - 50); 
-            }
-        });
-
-        // Player
-        drawFighter(player.x, player.y, "#f00", false);
-
-        // Bal
-        for (let i = bullets.length - 1; i >= 0; i--) {
-            let b = bullets[i];
-            b.y -= b.speed;
-            ctx.fillStyle = "#ffff00";
-            ctx.fillRect(b.x - 2, b.y, 4, 15);
-            if (b.y < 0) bullets.splice(i, 1);
+            gain = 0;
+            resultDisplay.style.color = "#ff0033";
+            resultDisplay.innerText = "PÈDI! CHIF LA SE TE: " + winningNumber;
+            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Roulèt la pa t an favè nou fwa sa a. Rekòmanse!"';
         }
 
-        // Enmi
-        for (let i = enemies.length - 1; i >= 0; i--) {
-            let en = enemies[i];
-            en.y += en.speed;
-            drawFighter(en.x, en.y, "#555", true);
-            
-            ctx.fillStyle = "#fff";
-            ctx.font = "bold 14px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText(en.hp, en.x, en.y - 5);
-
-            for (let j = bullets.length - 1; j >= 0; j--) {
-                let b = bullets[j];
-                if (Math.abs(b.x - en.x) < 20 && Math.abs(b.y - en.y) < 20) {
-                    en.hp--;
-                    bullets.splice(j, 1);
-                    if (en.hp <= 0) {
-                        enemies.splice(i, 1);
-                        score++;
-                        enemiesFinished++;
-                        document.getElementById('score').innerText = score;
-                        checkFinish();
-                    }
-                    break;
-                }
-            }
-
-            if (en && en.y > canvas.height + 50) {
-                enemies.splice(i, 1);
-                enemiesFinished++;
-                checkFinish();
-            }
-
-            if (en && Math.abs(player.x - en.x) < 30 && Math.abs(player.y - en.y) < 30) {
-                gameOver();
-            }
-        }
-        requestAnimationFrame(update);
-    }
-
-    function checkFinish() {
-        if (enemiesFinished >= TOTAL_ENEMIES) gameOver();
-    }
-
-    function gameOver() {
-        gameActive = false;
-        let won = score >= TARGET;
-        let gain = won ? (mizFinal * 10) : 0;
+        // Mete valè a nan input kache a epi voye l nan App a tou
+        document.getElementById("edittextGenyen").value = gain;
         sendToApp("genyen", gain);
 
-        // Mesaj dyalòg final la pou siksè oubyen defèt
-        let teksDyalog = won 
-            ? 'Kòmandan: "Ezekisyon pafè! Ou rache viktwa a epi ou sekirize kòb la!"' 
-            : 'Kòmandan: "Misyon echwe, yo te twòp pou nou! Al prepare w pou revanch lan."';
-
-        document.getElementById('modal').style.display = "flex";
-        document.getElementById('modal-content').innerHTML = `
-            <h1 style="color:${won ? '#0f0' : '#f00'}">${won ? 'MISYON REYISI!' : 'OU PÈDI!'}</h1>
-            <p style="font-size:13px; color:#ff00ff; font-style:italic; font-weight:bold; margin-bottom:15px;">${teksDyalog}</p>
-            <p>Ou detwi ${score} avyon sou ${TOTAL_ENEMIES}</p>
-            
-            <!-- Input envizib sa a la pou sistèm Android ou a ka li ID edittextGenyen an san pwoblèm -->
-            <input type="text" id="edittextGenyen" value="${gain}" style="display:none;">
-            
-            <h2 style="background:#000; padding:15px; border-radius:10px; color:#fff; margin-top:5px;">GANY: ${gain} HTG</h2>
-            <button class="btn-lanse" onclick="location.reload()">REKÒMANSE</button>
-        `;
+        document.getElementById("spin-btn").disabled = false;
     }
+
+    function easeOut(t, b, c, d) {
+        let ts = (t /= d) * t;
+        let tc = ts * t;
+        return b + c * (tc + -3 * ts + 3 * t);
+    }
+
+    drawWheel();
 </script>
 </body>
 </html>
