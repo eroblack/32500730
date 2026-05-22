@@ -16,11 +16,9 @@
         .input-box { display: flex; flex-direction: column; align-items: center; flex: 1; }
         label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 4px; font-weight: bold; letter-spacing: 0.5px; }
         
-        /* Id edittextPeye entegre pou miz la */
         input { background: #000; color: #ff0033; border: 2px solid #ff0033; padding: 8px; border-radius: 8px; width: 80%; text-align: center; font-size: 18px; font-weight: bold; }
         input:focus { outline: none; border-color: #00ffcc; color: #00ffcc; }
         
-        /* Zòn Bouton Miz yo */
         .miz-buttons-container { display: flex; justify-content: center; gap: 5px; width: 100%; margin-bottom: 8px; }
         .btn-miz { flex: 1; padding: 8px 2px; background: #222; border: 1px solid #ff0033; color: #ff0033; font-weight: bold; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .btn-miz:active { background: #ff0033; color: #000; }
@@ -42,7 +40,6 @@
 
     <div id="ui-top">
         <h2>EROBLACK CASINO</h2>
-        <!-- Ti dyalòg k ap kominike ak jwè a -->
         <div id="dialogue-box">Kòmandan: "Fè chwa chif ou ak miz ou pou w defye roulèt la!"</div>
         <div id="result-display"></div>
     </div>
@@ -55,12 +52,10 @@
             </div>
             <div class="input-box">
                 <label>MIZ (HTG)</label>
-                <!-- Id chanje an edittextPeye otomatikman -->
                 <input type="number" id="edittextPeye" value="10" oninput="KalkileKòb()">
             </div>
         </div>
 
-        <!-- 5 Bouton Miz rapid yo -->
         <div class="miz-buttons-container">
             <button class="btn-miz" onclick="ChwaziMiz(1)">1 HTG</button>
             <button class="btn-miz" onclick="ChwaziMiz(5)">5 HTG</button>
@@ -69,7 +64,8 @@
             <button class="btn-miz" onclick="ChwaziMiz(25)">25 HTG</button>
         </div>
         
-        <p id="fraz-miz">Ou mize 10 HTG, siw genyen wap fè 100 HTG!</p>
+        <!-- Kalkil fraz la chanje sou 25 fwa -->
+        <p id="fraz-miz">Ou mize 10 HTG, siw genyen wap fè 250 HTG!</p>
     </div>
 
     <div id="wheel-container">
@@ -79,11 +75,9 @@
 
     <button id="spin-btn" onclick="spinWheel()">Vire Roulèt la</button>
 
-    <!-- Bwat sa a kache men li la pou Sketchware ka toujou jwenn ID edittextGenyen an si li bezwen li nan kòd la -->
     <input type="text" id="edittextGenyen" value="0" style="display:none;">
 
 <script>
-    // Koneksyon ak Sketchware atravè VoyeKòb
     function sendToApp(bwat, val) {
         if (window.Android) { 
             window.Android.voyeKòb(bwat, val.toString()); 
@@ -106,7 +100,6 @@
     let spinTimeTotal = 0;
     let mizFinal = 0;
 
-    // Lis fraz dyalòg yo
     const dyalogMiz = [
         'Kòmandan: "Chwa sa a bèl! Roulèt la pral chofe."',
         'Kòmandan: "Ou mete bon kòb sou tab la! Ann gade kote l ap tonbe."',
@@ -130,10 +123,11 @@
         BayDyalog(dyalogMiz);
     }
 
+    // Kalkil la miltipliye pa 25 la la tou
     function KalkileKòb() {
         let miz = document.getElementById('edittextPeye').value;
         if(miz < 0 || miz === "") miz = 0;
-        let potansyel = miz * 10;
+        let potansyel = miz * 25;
         document.getElementById('fraz-miz').innerText = `Ou mize ${miz} HTG, siw genyen wap fè ${potansyel} HTG!`;
     }
 
@@ -185,7 +179,6 @@
             return;
         }
 
-        // Voye miz la nan aplikasyon an nan kòmansman
         sendToApp("peye", mizFinal);
         sendToApp("genyen", "0");
 
@@ -222,10 +215,11 @@
         let gain = 0;
 
         if (winningNumber === userNum) {
-            gain = mizFinal * 10;
+            // Kalkil gany lan fèt sou 25 fwa miz la la kounye a
+            gain = mizFinal * 25;
             resultDisplay.style.color = "#00ffcc";
             resultDisplay.innerText = "OU GANYEN! SE TE: " + winningNumber;
-            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Magnifik! Ou devine egzakteman kote boul la t apral poze!"';
+            document.getElementById('dialogue-box').innerText = 'Kòmandan: "Magnifik! Jackpot la tonbe! Ou fann roulèt la an de!"';
         } else {
             gain = 0;
             resultDisplay.style.color = "#ff0033";
@@ -233,7 +227,6 @@
             document.getElementById('dialogue-box').innerText = 'Kòmandan: "Roulèt la pa t an favè nou fwa sa a. Rekòmanse!"';
         }
 
-        // Mete valè a nan input kache a epi voye l nan App a tou
         document.getElementById("edittextGenyen").value = gain;
         sendToApp("genyen", gain);
 
